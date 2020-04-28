@@ -6,25 +6,25 @@ local api = require "luci.model.cbi.passwall.api.api"
 local appname = "passwall"
 
 m = Map(appname)
-m:section(SimpleSection).template  = "passwall/global/status2"
+m:append(Template("passwall/global/status1"))
 
 -- [[ Node List ]]--
-s = m:section(TypedSection, "nodes")
+s = m:section(TypedSection, "nodes",translate("Node List"))
 -- s.description = translate("Support for more than 10,000 ping nodes and luci does not crash and not slow.")
 s.anonymous = true
 s.addremove = true
 s.template = "cbi/tblsection"
-s.extedit = d.build_url("admin", "vpn", "passwall", "node_config", "%s")
+s.extedit = d.build_url("admin", "Internet", "passwall", "node_config", "%s")
 function s.create(e, t)
     local e = TypedSection.create(e, t)
     luci.http
-        .redirect(d.build_url("admin", "vpn", "passwall", "node_config", e))
+        .redirect(d.build_url("admin", "Internet", "passwall", "node_config", e))
 end
 
 function s.remove(t, a)
     s.map.proceed = true
     s.map:del(a)
-    luci.http.redirect(d.build_url("admin", "vpn", "passwall", "node_list"))
+    luci.http.redirect(d.build_url("admin", "Internet", "passwall", "node_list"))
 end
 
 if api.uci_get_type("global_other", "show_group", "1") == "1" then
@@ -35,6 +35,7 @@ if api.uci_get_type("global_other", "show_group", "1") == "1" then
     end
 end
 
+s.sortable = true
 -- 简洁模式
 if api.uci_get_type("global_other", "compact_display_nodes", "0") == "1" then
     if show_group then show_group.width = "25%" end
@@ -47,8 +48,7 @@ if api.uci_get_type("global_other", "compact_display_nodes", "0") == "1" then
         local type = api.uci_get_type_id(n, "type") or ""
         local address = api.uci_get_type_id(n, "address") or ""
         local port = api.uci_get_type_id(n, "port") or ""
-        if is_sub == "" and group == "" then str = str .. translate(type) .. "：" end
-        str = str .. remarks
+        str = str .. translate(type) .. "：" .. remarks
         if address ~= "" and port ~= "" then
             local s = " （" .. address .. ":" .. port .. "）"
             str = str .. s
@@ -56,7 +56,6 @@ if api.uci_get_type("global_other", "compact_display_nodes", "0") == "1" then
         return str
     end
 else
-    s.sortable = true
     ---- Add Mode
     if api.uci_get_type("global_other", "show_add_mode", "1") == "1" then
         o = s:option(DummyValue, "add_mode", translate("Add Mode"))
@@ -70,26 +69,31 @@ else
             return str
         end
     end
-    ---- Remarks
-    o = s:option(DummyValue, "remarks", translate("Remarks"))
 
     ---- Type
     o = s:option(DummyValue, "type", translate("Type"))
     o.cfgvalue = function(t, n)
         local v = Value.cfgvalue(t, n)
-        if v then
-            return translate(v)
-        end
+        if v then return translate(v) end
     end
+
+    ---- Remarks
+    o = s:option(DummyValue, "remarks", translate("Remarks"))
 
     ---- Address
     o = s:option(DummyValue, "address", translate("Address"))
+    o.cfgvalue = function(t, n)
+        return Value.cfgvalue(t, n) or "---"
+    end
 
     ---- Port
     o = s:option(DummyValue, "port", translate("Port"))
+    o.cfgvalue = function(t, n)
+        return Value.cfgvalue(t, n) or "---"
+    end
 
     ---- Encrypt Method
-    o = s:option(DummyValue, "encrypt_method", translate("Encrypt Method"))
+    --[[ o = s:option(DummyValue, "encrypt_method", translate("Encrypt Method"))
 o.width = "15%"
 o.cfgvalue = function(t, n)
     local str = "无"
@@ -102,7 +106,7 @@ o.cfgvalue = function(t, n)
         return api.uci_get_type_id(n, "v2ray_security")
     end
     return str
-end
+end--]]
 end
 
 ---- Ping

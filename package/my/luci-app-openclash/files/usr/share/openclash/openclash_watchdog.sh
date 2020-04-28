@@ -1,4 +1,5 @@
 #!/bin/sh
+
 CLASH="/etc/openclash/clash"
 CLASH_CONFIG="/etc/openclash"
 LOG_FILE="/tmp/openclash.log"
@@ -7,8 +8,16 @@ PROXY_ROUTE_TABLE="0x162"
 enable_redirect_dns=$(uci get openclash.config.enable_redirect_dns 2>/dev/null)
 dns_port=$(uci get openclash.config.dns_port 2>/dev/null)
 disable_masq_cache=$(uci get openclash.config.disable_masq_cache 2>/dev/null)
-en_mode=$(uci get openclash.config.en_mode 2>/dev/null)
 CRASH_NUM=0
+en_mode=$(uci get openclash.config.en_mode 2>/dev/null)
+
+if [ "$en_mode" = "fake-ip-tun" ] || [ "$en_mode" = "redir-host-tun" ]; then
+   core_type="Tun"
+fi
+
+if [ "$en_mode" = "redir-host-vpn" ] || [ "$en_mode" = "fake-ip-vpn" ]; then
+   core_type="Game"
+fi
 
 while :;
 do
@@ -23,10 +32,10 @@ if [ "$enable" -eq 1 ]; then
 	      echo "${LOGTIME} Watchdog: Clash Core Problem, Restart." >> $LOG_FILE
 	      nohup "$CLASH" -d "$CLASH_CONFIG" -f "$CONFIG_FILE" >> $LOG_FILE 2>&1 &
 	      sleep 3
-	      if [ "$en_mode" = "fake-ip-tun" ] || [ "$en_mode" = "redir-host-tun" ]; then
+	      if [ "$core_type" = "Tun" ]; then
 	         ip route replace default dev utun table "$PROXY_ROUTE_TABLE" 2>/dev/null
 	         ip rule add fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE" 2>/dev/null
-	      elif [ "$en_mode" = "redir-host-vpn" ] || [ "$en_mode" = "fake-ip-vpn" ]; then
+	      elif [ "$core_type" = "Game" ]; then
 	         ip tuntap add user root mode tun clash0 2>/dev/null
            ip link set clash0 up 2>/dev/null
            ip route replace default dev clash0 table "$PROXY_ROUTE_TABLE" 2>/dev/null
@@ -35,6 +44,7 @@ if [ "$enable" -eq 1 ]; then
 	      /usr/share/openclash/openclash_history_set.sh
 	   else
 	      echo "${LOGTIME} Watchdog: Already Restart 3 Times With Clash Core Problem, Auto-Exit." >> $LOG_FILE
+	      /etc/init.d/openclash stop
 	      exit 0
 	   fi
 	else
@@ -54,7 +64,7 @@ fi
 ## 端口转发重启
    last_line=$(iptables -t nat -nL PREROUTING --line-number |awk '{print $1}' 2>/dev/null |awk 'END {print}' |sed -n '$p')
    op_line=$(iptables -t nat -nL PREROUTING --line-number |grep "openclash" 2>/dev/null |awk '{print $1}' 2>/dev/null |head -1)
-   if [ "$last_line" -ne "$op_line" ]; then
+   if [ "$last_line" != "$op_line" ] && [ -z "$core_type" ]; then
       iptables -t nat -D PREROUTING -p tcp -j openclash
       iptables -t nat -A PREROUTING -p tcp -j openclash
       echo "$LOGTIME Watchdog: Reset Firewall For Enabling Redirect." >>$LOG_FILE

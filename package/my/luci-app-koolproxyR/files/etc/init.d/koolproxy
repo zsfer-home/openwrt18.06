@@ -100,12 +100,12 @@ creat_ipset() {
 	# Load ipset netfilter kernel modules and kernel modules
 	ipset -! create white_kp_list nethash
 	ipset -! create black_koolproxy iphash
-	cat $KP_DIR/data/rules/yhosts.txt $KP_DIR/data/rules/easylistchina.txt $KP_DIR/data/rules/fanboy.txt $KP_DIR/data/rules/user.txt | grep -Eo "(.\w+\:[1-9][0-9]{1,4})/" | grep -Eo "([0-9]{1,5})" | sort -un | sed -e '$a\80' -e '$a\443' | sed -e "s/^/-A kp_full_port &/g" -e "1 i\-N kp_full_port bitmap:port range 0-65535 " | ipset -R -!
+	cat $KP_DIR/data/rules/yhosts.txt $KP_DIR/data/rules/easylistchina.txt $KP_DIR/data/rules/fanboy.txt $KP_DIR/data/rules/AdGuardHome.txt $KP_DIR/data/rules/koolproxy.txt $KP_DIR/data/rules/daily.txt $KP_DIR/data/rules/user.txt | grep -Eo "(.\w+\:[1-9][0-9]{1,4})/" | grep -Eo "([0-9]{1,5})" | sort -un | sed -e '$a\80' -e '$a\443' | sed -e "s/^/-A kp_full_port &/g" -e "1 i\-N kp_full_port bitmap:port range 0-65535 " | ipset -R -!
 }
 
 add_white_black_ip() {
 	echo_date 添加ipset名单
-	ip_lan="0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.168.0.0/16 224.0.0.0/4 240.0.0.0/4"
+	ip_lan="0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.0.0.0/24 192.0.2.0/24 192.31.196.0/24 192.52.193.0/24 192.88.99.0/24 192.168.0.0/16 192.175.48.0/24 198.18.0.0/15 198.51.100.0/24 203.0.113.0/24 224.0.0.0/4 240.0.0.0/4 255.255.255.255"
 	for ip in $ip_lan
 	do
 		ipset -A white_kp_list $ip >/dev/null 2>&1
@@ -207,17 +207,26 @@ load_rules() {
 			yhosts.txt)
 				sed -i '1s/0/1/g' $KP_DIR/data/source.list
 			;;
-			kp.dat)
+			easylistchina.txt)
 				sed -i '2s/0/1/g' $KP_DIR/data/source.list
 			;;
-			user.txt)
+                                                   fanboy.txt)
 				sed -i '3s/0/1/g' $KP_DIR/data/source.list
 			;;
-			easylistchina.txt)
+                                                   AdGuardHome.txt)
 				sed -i '4s/0/1/g' $KP_DIR/data/source.list
 			;;
-			fanboy.txt)
+			koolproxy.txt)
 				sed -i '5s/0/1/g' $KP_DIR/data/source.list
+			;;
+			daily.txt)
+				sed -i '6s/0/1/g' $KP_DIR/data/source.list
+			;;
+                                                   kp.dat)
+				sed -i '7s/0/1/g' $KP_DIR/data/source.list
+			;;
+			user.txt)
+				sed -i '8s/0/1/g' $KP_DIR/data/source.list
 			;;
 		esac
 	done
@@ -227,13 +236,13 @@ load_rules() {
 	do
 		case "$rule" in
 			easylistchina.txt)
-				sed -i '5s/0/1/g' $KP_DIR/data/source.list
+				sed -i '9s/0/1/g' $KP_DIR/data/source.list
 			;;
 			chengfeng.txt)
-				sed -i '6s/0/1/g' $KP_DIR/data/source.list
+				sed -i '10s/0/1/g' $KP_DIR/data/source.list
 			;;
 			fanboy.txt)
-				sed -i '7s/0/1/g' $KP_DIR/data/source.list
+				sed -i '11s/0/1/g' $KP_DIR/data/source.list
 			;;
 		esac
 	done

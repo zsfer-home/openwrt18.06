@@ -13,7 +13,7 @@ local fs  = require "nixio.fs"
 local sys = require "luci.sys"
 
 m = Map(shadowsocksr)
-m:section(SimpleSection).template  = "shadowsocksr/status"
+m:section(SimpleSection).template  = "shadowsocksr/status2"
 
 
 -- [[ Servers Manage ]]--
@@ -21,48 +21,50 @@ s = m:section(TypedSection, "servers")
 s.anonymous = true
 s.addremove = true
 s.description = string.format(translate("Server Count") ..  ": %d", server_count)
-s.sortable = false
-s.template = "cbi/tblsection"
 s.sortable = true
-s.extedit = luci.dispatcher.build_url("admin/services/shadowsocksr/servers/%s")
+s.template = "cbi/tblsection"
+s.extedit = luci.dispatcher.build_url("admin/Internet/shadowsocksr/servers/%s")
 function s.create(...)
 	local sid = TypedSection.create(...)
 	if sid then
 		luci.http.redirect(s.extedit % sid)
-	return
+		return
 	end
 end
 
-o = s:option(DummyValue, "type", translate("Type"))
-function o.cfgvalue(...)
-	return Value.cfgvalue(...) or translate("")
-end
-
 o = s:option(DummyValue, "alias", translate("Alias"))
-function o.cfgvalue(...)
-	return Value.cfgvalue(...) or translate("None")
-end
+o.width="10%"
+o = s:option(DummyValue, "type", translate("Type"))
+o.width="15%"
 
 o = s:option(DummyValue, "server", translate("Server Address"))
-function o.cfgvalue(...)
-	return Value.cfgvalue(...) or "?"
-end
+o.width="10%"
 
 o = s:option(DummyValue, "server_port", translate("Server Port"))
-function o.cfgvalue(...)
-	return Value.cfgvalue(...) or "?"
-end
+o.width="10%"
 
-o = s:option(Flag, "switch_enable", translate("Auto Switch"))
-function o.cfgvalue(...)
-	return Value.cfgvalue(...) or "1"
+o = s:option(DummyValue, "encrypt_method", translate("Encrypt Method"))
+o.width="10%"
+
+o = s:option(DummyValue, "protocol", translate("Protocol"))
+o.width="10%"
+o = s:option(DummyValue, "obfs", translate("Obfs"))
+o.width="10%"
+
+o = s:option(Flag, "switch_enable", translate("Enable Auto Switch"))
+o.width="10%"
+
+if nixio.fs.access("/usr/bin/kcptun-client") then
+
+o = s:option(Flag, "kcp_enable", translate("KcpTun"))
+o.width="10%"
 end
 
 o = s:option(DummyValue, "server_port", translate("Socket Connected"))
 o.template="shadowsocksr/socket"
 o.width="10%"
 
-o = s:option(DummyValue, "server", translate("Ping Latency"))
+o = s:option(DummyValue,"server",translate("Ping Latency"))
 o.template="shadowsocksr/ping"
 o.width="10%"
 

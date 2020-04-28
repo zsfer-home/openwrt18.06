@@ -26,12 +26,12 @@ local chnlist_update = api.uci_get_type("global_rules", "chnlist_update", "1") =
 				checkBoxList.push(dom.name);　　
 			}
 		}
-		XHR.get('<%=dsp.build_url("admin/vpn/passwall/update_rules")%>', {
+		XHR.get('<%=dsp.build_url("admin/Internet/passwall/update_rules")%>', {
 				update: checkBoxList
 			},
 			function(x, data) {
 				if(x && x.status == 200) {
-					window.location.href = '<%=dsp.build_url("admin/vpn/passwall/log")%>';
+					window.location.href = '<%=dsp.build_url("admin/Internet/passwall/log")%>';
 				} else {
 					alert("<%:Error%>");
 					btn.disabled = false;
@@ -75,7 +75,7 @@ local chnlist_update = api.uci_get_type("global_rules", "chnlist_update", "1") =
 			<div class="cbi-value-field">
 				<div class="cbi-value-description">
 					<span>【 <%=chnlist_version%> 】</span>
-					<input type="checkbox" name="chnlist_update" value="1" <%=chnroute_update%> />
+					<input type="checkbox" name="chnlist_update" value="1" <%=chnlist_update%> />
 				</div>
 			</div>
 		</div>

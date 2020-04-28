@@ -6,6 +6,7 @@ local SYS  = require "luci.sys"
 local HTTP = require "luci.http"
 local DISP = require "luci.dispatcher"
 local UTIL = require "luci.util"
+local fs = require "luci.openclash"
 local uci = require "luci.model.uci".cursor()
 
 font_red = [[<font color="red">]]
@@ -103,6 +104,11 @@ o = s:option(DynamicList, "keyword", font_red..bold_on..translate("Keyword Match
 o.description = font_red..bold_on..translate("(eg: hk or tw&bgp)")..bold_off..font_off
 o.rmempty = true
 
+---- exkey
+o = s:option(DynamicList, "ex_keyword", font_red..bold_on..translate("Exclude Keyword Match")..bold_off..font_off)
+o.description = font_red..bold_on..translate("(eg: hk or tw&bgp)")..bold_off..font_off
+o.rmempty = true
+
 local t = {
     {Commit, Apply}
 }
@@ -113,6 +119,7 @@ o = a:option(Button, "Commit")
 o.inputtitle = translate("Commit Configurations")
 o.inputstyle = "apply"
 o.write = function()
+	fs.unlink("/tmp/Proxy_Group")
   m.uci:commit("openclash")
 end
 
@@ -120,9 +127,18 @@ o = a:option(Button, "Apply")
 o.inputtitle = translate("Apply Configurations")
 o.inputstyle = "apply"
 o.write = function()
+	fs.unlink("/tmp/Proxy_Group")
   m.uci:set("openclash", "config", "enable", 1)
   m.uci:commit("openclash")
-  SYS.call("rm -rf /etc/openclash/backup/* 2>/dev/null")
+  uci:foreach("openclash", "config_subscribe",
+		function(s)
+		  if s.name ~= "" and s.name ~= nil and s.enabled == "1" then
+			   local back_cfg_path_yaml="/etc/openclash/backup/" .. s.name .. ".yaml"
+			   local back_cfg_path_yml="/etc/openclash/backup/" .. s.name .. ".yaml"
+			   fs.unlink(back_cfg_path_yaml)
+			   fs.unlink(back_cfg_path_yml)
+			end
+		end)
   SYS.call("/usr/share/openclash/openclash.sh >/dev/null 2>&1 &")
   HTTP.redirect(DISP.build_url("admin", "services", "openclash"))
 end

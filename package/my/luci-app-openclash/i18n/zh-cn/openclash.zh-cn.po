@@ -6,7 +6,7 @@ msgid "OpenClash"
 msgstr "OpenClash"
 
 msgid "A Clash Client For OpenWrt"
-msgstr "一个运行在OpenWrt上的Clash客户端，兼容Shadowsocks、Vmess、Snell等协议，根据灵活的规则配置实现策略代理"
+msgstr "一个运行在OpenWrt上的Clash客户端，兼容Shadowsocks、Vmess、Trojan、Snell等协议，根据灵活的规则配置实现策略代理"
 
 msgid "Global Settings(Will Modify The Config File Or Subscribe According To The Settings On This Page)"
 msgstr "全局设置（将按照本页设置自动修改配置文件和获取订阅）"
@@ -65,11 +65,17 @@ msgstr "文件不存在"
 msgid "Not Set"
 msgstr "未设置"
 
-msgid "Server logs"
+msgid "Server Logs"
 msgstr "运行日志"
 
-msgid "Logs"
-msgstr "运行日志"
+msgid "Debug Logs"
+msgstr "调试日志"
+
+msgid "Generate Logs"
+msgstr "生成日志"
+
+msgid "Click to Generate"
+msgstr "点击生成"
 
 msgid "Enable Clash"
 msgstr "启动 OpenClash"
@@ -235,6 +241,9 @@ msgstr ""
 "固件须配置好IPV6的NAT，如你不使用IPV6请关闭固件的相关服务，避免客户端连接出现异常"
 
 msgid "Rules Setting"
+msgstr "规则设置"
+
+msgid "Rules Setting(Access Control)"
 msgstr "规则设置（访问控制）"
 
 msgid "Config Manage"
@@ -412,6 +421,9 @@ msgstr "必须代理的流量"
 msgid "Apple"
 msgstr "苹果服务流量"
 
+msgid "Microsoft"
+msgstr "微软服务流量"
+
 msgid "Netflix"
 msgstr "Netflix流量"
 
@@ -430,6 +442,9 @@ msgstr "测速流量"
 msgid "Telegram"
 msgstr "Telegram流量"
 
+msgid "PayPal"
+msgstr "PayPal流量"
+
 msgid "AdBlock"
 msgstr "广告流量"
 
@@ -443,10 +458,16 @@ msgid "Choose Proxy Group, Base On Your Servers Group in config.yaml"
 msgstr "指定流量(策略)的代理方式，只支持选择（服务器组），信息来源于您的配置文件"
 
 msgid "Custom Clash Rules"
+msgstr "自定义规则"
+
+msgid "Custom Clash Rules(Access Control)"
 msgstr "自定义规则(访问控制)"
 
 msgid "Custom Rules Here, For More Go Github:https://github.com/Dreamacro/clash/blob/master/README.md, IP To CIDR: http://ip2cidr.com"
-msgstr "设置自定义规则，详细信息请前往Github( https://github.com/Dreamacro/clash/blob/master/README.md )查询，在线IP段转CIDR地址：http://ip2cidr.com"
+msgstr "设置自定义规则（顶部），详细信息请前往Github( https://github.com/Dreamacro/clash/blob/master/README.md )查询，在线IP段转CIDR地址：http://ip2cidr.com"
+
+msgid "Custom Rules 2 Here, For More Go Github:https://github.com/Dreamacro/clash/blob/master/README.md, IP To CIDR: http://ip2cidr.com"
+msgstr "设置自定义规则（底部），详细信息请前往Github( https://github.com/Dreamacro/clash/blob/master/README.md )查询，在线IP段转CIDR地址：http://ip2cidr.com"
 
 msgid "Custom Hosts Here, For More Go Github:https://github.com/Dreamacro/clash/blob/master/README.md"
 msgstr "设置自定义Hosts，详细信息请前往Github( https://github.com/Dreamacro/clash/blob/master/README.md )查询"
@@ -639,6 +660,9 @@ msgstr "Fallback【故障切换】"
 msgid "Load-Balance"
 msgstr "Load-Balance【负载均衡】"
 
+msgid "Relay Traffic"
+msgstr "Relay【嵌套中转】"
+
 msgid "Other Group"
 msgstr "包含其他策略组（请勿重复添加）"
 
@@ -704,6 +728,9 @@ msgstr "（空值无效）"
 
 msgid "Keyword Match"
 msgstr "筛选节点"
+
+msgid "Exclude Keyword Match"
+msgstr "排除节点"
 
 msgid "(eg: hk or tw&bgp)"
 msgstr "（格式示例：香港、台湾&bgp）"
@@ -777,5 +804,53 @@ msgstr "序号"
 msgid "Game Rules Manage"
 msgstr "管理游戏规则"
 
+msgid "Proxy UDP Traffics"
+msgstr "*UDP流量转发"
 
+msgid "Select Mode For UDP Traffics, The Servers Must Support UDP while Choose Proxy"
+msgstr "启用时服务器必须支持UDP转发"
 
+msgid "Operation Mode"
+msgstr "模式设置"
+
+msgid "Select Operation Mode"
+msgstr "*页面操作模式"
+
+msgid "Select Mode For Page Settings, Switch By Click the Button Bellow"
+msgstr "选择全局设置的操作模式，单击下面的按钮进行切换"
+
+msgid "redir-host mode"
+msgstr "Redir-Host 模式"
+
+msgid "fake-ip mode"
+msgstr "Fake-IP 模式"
+
+msgid "Switch Operation Mode"
+msgstr "切换操作模式"
+
+msgid "Switch Mode"
+msgstr "切换"
+
+msgid "Access Control"
+msgstr "访问控制"
+
+msgid "Access Control Mode"
+msgstr "访问控制模式"
+
+msgid "Black List Mode"
+msgstr "黑名单模式"
+
+msgid "White List Mode"
+msgstr "白名单模式"
+
+msgid "LAN Bypassed Host List"
+msgstr "不走代理的局域网LAN IP"
+
+msgid "LAN Proxied Host List"
+msgstr "走代理的局域网LAN IP"
+
+msgid "Rule Match Proxy Mode"
+msgstr "*仅代理命中规则流量"
+
+msgid "Only Proxy Rules Match, Prevent BT Passing"
+msgstr "仅允许代理命中规则的流量，防止BT下载流量经过代理"

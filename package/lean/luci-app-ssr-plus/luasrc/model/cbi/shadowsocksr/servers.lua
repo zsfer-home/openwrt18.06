@@ -17,7 +17,8 @@ local name = ""
 uci:foreach("shadowsocksr", "global", function(s) name = s[".name"] end)
 
 m = Map(shadowsocksr)
-m:append(Template("shadowsocksr/status"))
+
+m:section(SimpleSection).template = "shadowsocksr/status"
 
 -- [[ Servers List ]]--
 s = m:section(TypedSection, "servers")
@@ -28,7 +29,7 @@ s.sortable = false
 s.des = server_count
 s.current = uci:get("shadowsocksr", name, "global_server")
 s.template = "shadowsocksr/add"
-s.extedit = luci.dispatcher.build_url("admin/services/shadowsocksr/servers/%s")
+s.extedit = luci.dispatcher.build_url("admin/Internet/shadowsocksr/servers/%s")
 function s.create(...)
 	local sid = TypedSection.create(...)
     if sid then
@@ -55,7 +56,7 @@ if nixio.fs.access("/usr/bin/kcptun-client") then
     function o.cfgvalue(...) return Value.cfgvalue(...) or "?" end
 
 end
-
+m:section(SimpleSection).template  = "vssr/status2"
 
 return m
 

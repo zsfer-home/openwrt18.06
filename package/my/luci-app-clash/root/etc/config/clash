@@ -28,56 +28,15 @@ config clash 'config'
 	option auto_update_time '12'
 	option clear_time '12'
 	option append_rules '0'
+	option enable_udp '0'
+	option ping_enable '1'
+	option dnscache '0'
 
-
-config groups
-	option old_name '❌AdBlock'
-	option old_name_cfg '❌AdBlock'
-	option type 'select'
-	list other_group 'REJECT'
-	option name '❌AdBlock'
-
-config groups
-	option old_name '🖥️AsianTV'
-	option old_name_cfg '🖥️AsianTV'
-	option type 'select'
-	option name '🖥️AsianTV'
-	list other_group 'DIRECT'
-	list other_group '🔑Proxy'
-
-config groups
-	option old_name '📺GlobalTV'
-	option old_name_cfg '📺GlobalTV'
-	option type 'select'
-	option name '📺GlobalTV'
-	list other_group 'ALL'
-
-config groups
-	option type 'select'
-	option name '🔑Proxy'
-	list other_group 'ALL'
-
+	
 config addtype
-	option type 'SRC-IP-CIDR'
-	option pgroup 'DIRECT'
-	list ipaaddr '192.168.1.4/30'
+	option type 'IP-CIDR'
+	option pgroup 'REJECT'
+	option ipaaddr '198.18.0.1/16'
+	option res '1'
+	
 
-config addtype
-	option type 'SRC-IP-CIDR'
-	option pgroup 'DIRECT'
-	option ipaaddr '192.168.1.2/31'
-
-config addtype
-	option type 'DOMAIN-KEYWORD'
-	option pgroup 'DIRECT'
-	option ipaaddr 'baidu'
-
-config addtype
-	option type 'SRC-PORT'
-	option pgroup 'DIRECT'
-	option ipaaddr '22'
-
-config addtype
-	option type 'DST-PORT'
-	option pgroup 'DIRECT'
-	option ipaaddr '443'

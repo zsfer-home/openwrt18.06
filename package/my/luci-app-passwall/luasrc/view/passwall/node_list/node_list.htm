@@ -5,7 +5,7 @@
 	
 	local tcp_node_num = api.uci_get_type("global_other", "tcp_node_num", 1)
 	local udp_node_num = api.uci_get_type("global_other", "udp_node_num", 1)
-	local socks5_node_num = api.uci_get_type("global_other", "socks5_node_num", 1)
+	local socks_node_num = api.uci_get_type("global_other", "socks_node_num", 1)
 	local compact_display_nodes = api.uci_get_type("global_other", "compact_display_nodes", 1)
 -%>
 
@@ -16,6 +16,8 @@ table th, .table .th {
 
 table td, .table .td {
 	text-align: center;
+    white-space: nowrap;
+    word-break: keep-all;
 }
 
 #set_node_div{
@@ -96,7 +98,7 @@ table td, .table .td {
 	
 	function set_node(protocol,number) {
 		if (confirm('<%:Are you sure set to%> ' + protocol.toUpperCase() + "_" + number + '<%:the server?%>')==true){
-			window.location.href = '<%=dsp.build_url("admin/vpn/passwall/set_node")%>?protocol=' + protocol + '&number=' + number + '&section=' + section;
+			window.location.href = '<%=dsp.build_url("admin/Internet/passwall/set_node")%>?protocol=' + protocol + '&number=' + number + '&section=' + section;
 		}
 	}
 	
@@ -115,7 +117,7 @@ table td, .table .td {
 			var port = document.getElementById("cbid.passwall." + cbi_id + ".port").value;
 		<% end %>
 		if ((address != null && address != "") && (port != null && port != "")) {
-			XHR.get('<%=dsp.build_url("admin/vpn/passwall/ping_node")%>', {
+			XHR.get('<%=dsp.build_url("admin/Internet/passwall/ping_node")%>', {
 					address: address,
 					port: port
 				},
@@ -139,14 +141,14 @@ table td, .table .td {
 	}
 	
 	/* 自动Ping */
-	var auto_ping_value = document.getElementsByClassName('auto_ping_value');
+	const auto_ping_value = document.getElementsByClassName('auto_ping_value');
 	var index = 0;
 	function auto_ping() {
 		if (index >= auto_ping_value.length) { 
 			return;
 		}
-		var is_ping = auto_ping_value[index].getAttribute("ping");
-		if (is_ping == null) {
+		var has_ping = auto_ping_value[index].getAttribute("has_ping");
+		if (has_ping == null) {
 			var cbi_id = auto_ping_value[index].getAttribute("cbiid");
 			<% if compact_display_nodes and tonumber(compact_display_nodes) == 1 then %>
 				var remarks = document.getElementById("cbid.passwall." + cbi_id + ".remarks").value;
@@ -161,8 +163,10 @@ table td, .table .td {
 				var address = document.getElementById("cbid.passwall." + cbi_id + ".address").value;
 				var port = document.getElementById("cbid.passwall." + cbi_id + ".port").value;
 			<% end %>
-			if ((address != null && address != "") && (port != null && port != "")) {
-				ajax.post('<%=dsp.build_url("admin/vpn/passwall/ping_node")%>', {
+			//判断是否含有汉字
+			var reg = new RegExp("[\\u4E00-\\u9FFF]+","g");
+			if ((address != null && address != "") && (port != null && port != "") && reg.test(address) == false && (address.indexOf(".") != -1 && address.charAt(address.address - 1) != ".")) {
+				ajax.post('<%=dsp.build_url("admin/Internet/passwall/ping_node")%>', {
 						index: index,
 						address: address,
 						port: port
@@ -187,7 +191,7 @@ table td, .table .td {
 								<% end %>
 								
 								if (address == obj_address && port == obj_port) {
-									auto_ping_value[i].setAttribute("ping", "1");
+									auto_ping_value[i].setAttribute("has_ping", "1");
 									if (result.ping == null || result.ping.trim() == "") {
 										auto_ping_value[i].innerHTML = "<font style='color:red'><%:Timeout%></font>";
 									} else {
@@ -257,9 +261,9 @@ table td, .table .td {
 			<% end %>
 		<% end %>
 		
-		<% if socks5_node_num and tonumber(socks5_node_num) >= 1 then %>
-			<% for i = 1, socks5_node_num, 1 do %>
-				<input class="cbi-button cbi-button-edit" type="button" onclick="set_node('socks5',<%=i%>)" value="Socks5_<%=i%>" />
+		<% if socks_node_num and tonumber(socks_node_num) >= 1 then %>
+			<% for i = 1, socks_node_num, 1 do %>
+				<input class="cbi-button cbi-button-edit" type="button" onclick="set_node('socks',<%=i%>)" value="Socks_<%=i%>" />
 			<% end %>
 		<% end %>
 		<input class="cbi-button cbi-button-remove" type="button" onclick="close_set_node_div()" value="<%:Close%>" />

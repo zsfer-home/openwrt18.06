@@ -20,7 +20,6 @@
     <link rel="preconnect" href="https://api.ttt.sh">
     <link rel="preconnect" href="https://api.skk.moe">
     <link rel="preconnect" href="https://d.skk.moe">
-    <link rel="shortcut icon" type="image/ico" href="https://cdn.jsdelivr.net/npm/skx@0.0.1">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,minimal-ui">
     <title>IP 地址查询</title>
     <style>
@@ -126,7 +125,7 @@
     </style>
 </head>
 <fieldset class="cbi-section">
-	<table>
+	<table width="100%">
      <tr><td width="100%">
 <body>
     <div style="display: flex;">
@@ -203,13 +202,9 @@
                     throw error;
                 }),
             parseIPIpip: (ip, elID) => {
-                IP.get(`https://api.skk.moe/network/parseIp/ipip/v3/${ip}`, 'json')
+                IP.get(`https://qqwry.api.skk.moe/${ip}`, 'json')
                     .then(resp => {
-                        let x = '';
-                        for (let i of resp.data) {
-                            x += (i !== '') ? `${i} ` : '';
-                        }
-                        $$.getElementById(elID).innerHTML = x;
+                        $$.getElementById(elID).innerHTML = resp.data.geo;
                         //$$.getElementById(elID).innerHTML = `${resp.data.country} ${resp.data.regionName} ${resp.data.city} ${resp.data.isp}`;
                     })
             },
